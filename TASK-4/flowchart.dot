@@ -1,0 +1,50 @@
+digraph DersKayitSistemi {
+    rankdir=TB;
+    node [shape=box, style=rounded];
+
+    Giris [label="Öğrenci Girişi\n(Numara + Şifre)"];
+    GirisBasarili [label="Giriş Başarılı?", shape=diamond];
+    DersListesi [label="Ders Listesini Görüntüle"];
+    DersSecimi [label="Ders Seçimi"];
+    KontenjanKontrol [label="Kontenjan Kontrolü", shape=diamond];
+    OnKosulKontrol [label="Ön Koşul Kontrolü", shape=diamond];
+    ZamanCakismaKontrol [label="Zaman Çakışması Kontrolü", shape=diamond];
+    KrediLimitiKontrol [label="Kredi Limiti Kontrolü", shape=diamond];
+    DersEkle [label="Ders Ekle"];
+    DersCikar [label="Ders Çıkarma"];
+    KayitOzeti [label="Kayıt Özeti"];
+    DanismanOnayi [label="Danışman Onayı Gerekli?", shape=diamond];
+    KayitOnay [label="Kayıt Onaylandı"];
+    Cikis [label="Sistemden Çıkış", shape=ellipse];
+
+    // Akış
+    Giris -> GirisBasarili;
+    GirisBasarili -> DersListesi [label="Evet"];
+    GirisBasarili -> Cikis [label="Hayır"];
+
+    DersListesi -> DersSecimi;
+    DersSecimi -> KontenjanKontrol;
+
+    KontenjanKontrol -> OnKosulKontrol [label="Evet"];
+    KontenjanKontrol -> DersSecimi [label="Hayır\nUyarı: Kontenjan dolu"];
+
+    OnKosulKontrol -> ZamanCakismaKontrol [label="Evet"];
+    OnKosulKontrol -> DersSecimi [label="Hayır\nUyarı: Ön koşul eksik"];
+
+    ZamanCakismaKontrol -> KrediLimitiKontrol [label="Hayır"];
+    ZamanCakismaKontrol -> DersSecimi [label="Evet\nUyarı: Zaman çakışması"];
+
+    KrediLimitiKontrol -> DersEkle [label="Evet"];
+    KrediLimitiKontrol -> DersSecimi [label="Hayır\nUyarı: Kredi limiti aşılıyor"];
+
+    DersEkle -> DersSecimi [label="Ders ekleme tamam"];
+
+    DersSecimi -> DersCikar [label="İsteğe bağlı ders çıkarma"];
+    DersCikar -> DersSecimi [label="Ders çıkarma tamam"];
+
+    DersSecimi -> KayitOzeti [label="Kaydı tamamla"];
+    KayitOzeti -> DanismanOnayi;
+    DanismanOnayi -> KayitOnay [label="Evet"];
+    DanismanOnayi -> KayitOzeti [label="Hayır"];
+    KayitOnay -> Cikis;
+}

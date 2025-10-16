@@ -1,0 +1,94 @@
+BAŞLA
+
+Öğrenci Girişi:
+    SOR "Öğrenci numarası:"
+    AL ogrenci_no
+    SOR "Şifre:"
+    AL sifre
+
+    EĞER ogrenci_no ve sifre doğru ise
+        GİRİŞ BAŞARILI
+    DEĞİLSE
+        YAZ "Hatalı giriş"
+        DUR
+
+Ders Listesini Görüntüle:
+    YAZ "Mevcut Dersler:"
+    DÖNGÜ her ders için dersler_listesi
+        YAZ ders_kodu, ders_adı, kredi, kontenjan, ön_kosul, zaman
+
+Ders Seçimi:
+    TEKRAR
+        SOR "Eklemek istediğiniz ders kodu (Çıkmak için 'q'):"
+        AL ders_kodu
+
+        EĞER ders_kodu == 'q' ise
+            DUR
+
+        BUL ders nesnesi dersler_listesi içinde ders_kodu ile eşleşen
+
+        EĞER ders yok ise
+            YAZ "Ders bulunamadı"
+            DEVAM
+
+        // Kontenjan Kontrolü
+        EĞER ders.kontenjan <= 0 ise
+            YAZ "Dersin kontenjanı dolu"
+            DEVAM
+
+        // Ön Koşul Kontrolü
+        EĞER ders.onkosul != boş VE ogrenci kayıtlı dersler içinde ders.onkosul yok ise
+            YAZ "Ön koşul dersini tamamlamanız gerekiyor: ", ders.onkosul
+            DEVAM
+
+        // Zaman Çakışması Kontrolü
+        ZAMAN_CAKIŞI = HAYIR
+        DÖNGÜ ogrencinin kayıtlı dersleri içinde
+            EĞER mevcut_ders.zaman == ders.zaman ise
+                ZAMAN_CAKIŞI = EVET
+                KIR
+        EĞER ZAMAN_CAKIŞI ise
+            YAZ "Ders zaman olarak çakışıyor"
+            DEVAM
+
+        // Kredi Limiti Kontrolü
+        EĞER ogrenci.toplam_kredi + ders.kredi > 35 ise
+            YAZ "Kredi limiti aşılıyor"
+            DEVAM
+
+        // Ders Ekleme
+        ogrenci.kayitli_dersler EKLE ders_kodu
+        ogrenci.toplam_kredi = ogrenci.toplam_kredi + ders.kredi
+        ders.kontenjan = ders.kontenjan - 1
+        YAZ "Ders başarıyla eklendi"
+
+    TEKRAR SONU
+
+Ders Çıkarma (İsteğe Bağlı):
+    TEKRAR
+        YAZ "Kayıtlı dersler: ", ogrenci.kayitli_dersler
+        SOR "Çıkarmak istediğiniz ders kodu (Çıkmak için 'q'):"
+        AL ders_kodu
+
+        EĞER ders_kodu == 'q' ise
+            DUR
+
+        EĞER ders_kodu KAYITLI DERSLER içinde ise
+            ogrenci.kayitli_dersler SİL ders_kodu
+            ogrenci.toplam_kredi = ogrenci.toplam_kredi - ders.kredi
+            ders.kontenjan = ders.kontenjan + 1
+            YAZ "Ders çıkarıldı"
+        DEĞİLSE
+            YAZ "Bu derse kayıtlı değilsiniz"
+    TEKRAR SONU
+
+Kayıt Özeti ve Onaylama:
+    YAZ "--- Kayıt Özeti ---"
+    DÖNGÜ her ders_kodu in ogrenci.kayitli_dersler
+        YAZ ders_kodu, ders_adı, kredi
+    YAZ "Toplam Kredi:", ogrenci.toplam_kredi
+
+    SOR "Kaydı onaylıyor musunuz? (E/H):"
+    AL onay
+    EĞER onay == 'E' ise
+        YAZ "Kayıt onaylandı. Danışman onayı gerekli ise kont

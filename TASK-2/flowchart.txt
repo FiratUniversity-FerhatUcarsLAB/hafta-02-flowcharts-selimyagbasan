@@ -1,0 +1,78 @@
+digraph E_Ticaret_Sistemi {
+    rankdir=TB;
+    node [shape=box];
+
+    // Başlangıç
+    BASLA [label="BASLA\nKullanıcı Girişi"];
+
+    // Kullanıcı Girişi
+    GIRIS_KONTROL [shape=diamond, label="Kullanıcı kayıtlı ve bilgileri doğru?"];
+    GIRIS_HATA [label="Giriş hatası göster"];
+    GIRIS_OK [label="Kullanıcı giriş yaptı"];
+
+    // Ürün seçimi ve sepete ekleme
+    BASLA_URUN [label="BASLA\nÜrün Seçimi ve Sepete Ekleme"];
+    URUN_DONGU [shape=diamond, label="Kullanıcı ürün seçmeye devam ediyor?"];
+    URUN_SEC [label="Ürünü seç"];
+    STOK_KONTROL [shape=diamond, label="Ürün stokta mevcut?"];
+    SEPET_EKLE [label="Sepete ekle"];
+    STOK_HATA [label="Stokta yok mesajı göster"];
+
+    // İndirim kodu
+    INDIRIM_KONTROL [shape=diamond, label="Kullanıcı indirim kodu girdi mi?"];
+    KOD_GECERLI [shape=diamond, label="Kod geçerli mi ve kullanım hakkı var mı?"];
+    INDIRIM_UYGULA [label="İndirimi sepete uygula"];
+    KOD_HATA [label="Hata mesajı göster"];
+
+    // Kargo hesaplama
+    KARGO [label="BASLA\nKargo Hesaplama\nAdres al ve ücret hesapla"];
+
+    // Ödeme
+    BASLA_ODEME [label="BASLA\nÖdeme Aşaması"];
+    ODEME_BILGI [shape=diamond, label="Ödeme bilgileri geçerli mi?"];
+    ODEME_TALEP [label="Ödeme sağlayıcısına talep gönder"];
+    ODEME_OK [shape=diamond, label="Ödeme başarılı mı?"];
+    ODEME_BASARISIZ [label="Ödeme başarısız mesajı göster"];
+    ODEME_BILGI_HATA [label="Geçersiz ödeme bilgisi mesajı göster"];
+
+    // Sipariş tamamlama
+    SIPARIS [label="BASLA\nSipariş Tamamlama\nSiparişi onayla ve fatura gönder"];
+
+    // Bitiş
+    BITIS [label="BITIR"];
+
+    // Bağlantılar
+    BASLA -> GIRIS_KONTROL;
+    GIRIS_KONTROL -> GIRIS_OK [label="EVET"];
+    GIRIS_KONTROL -> GIRIS_HATA [label="HAYIR"];
+    GIRIS_HATA -> BITIS;
+    GIRIS_OK -> BASLA_URUN;
+
+    BASLA_URUN -> URUN_DONGU;
+    URUN_DONGU -> URUN_SEC [label="EVET"];
+    URUN_DONGU -> INDİRIM_KONTROL [label="HAYIR"];
+    URUN_SEC -> STOK_KONTROL;
+    STOK_KONTROL -> SEPET_EKLE [label="EVET"];
+    STOK_KONTROL -> STOK_HATA [label="HAYIR"];
+    SEPET_EKLE -> URUN_DONGU;
+    STOK_HATA -> URUN_DONGU;
+
+    INDİRIM_KONTROL -> KOD_GECERLI [label="EVET"];
+    INDİRIM_KONTROL -> KOD_HATA [label="HAYIR"];
+    KOD_GECERLI -> INDIRIM_UYGULA [label="EVET"];
+    KOD_GECERLI -> KOD_HATA [label="HAYIR"];
+    INDİRIM_UYGULA -> KARGO;
+    KOD_HATA -> KARGO;
+
+    KARGO -> BASLA_ODEME;
+    BASLA_ODEME -> ODEME_BILGI;
+    ODEME_BILGI -> ODEME_TALEP [label="EVET"];
+    ODEME_BILGI -> ODEME_BILGI_HATA [label="HAYIR"];
+    ODEME_TALEP -> ODEME_OK;
+    ODEME_OK -> SIPARIS [label="EVET"];
+    ODEME_OK -> ODEME_BASARISIZ [label="HAYIR"];
+    ODEME_BILGI_HATA -> BITIS;
+    ODEME_BASARISIZ -> BITIS;
+
+    SIPARIS -> BITIS;
+}

@@ -1,0 +1,49 @@
+Başla
+
+# Hasta kimlik doğrulama
+Fonksiyon HastaKimlikDogrulama:
+    TC_Numara = Kullanıcıdan al
+    Eğer TC_Numara hastalar listesinde varsa:
+        Hoşgeldiniz mesajı göster
+        TC_Numara döndür
+    Değilse:
+        Hasta bulunamadı mesajı göster
+        None döndür
+
+# Randevu alma fonksiyonu
+Fonksiyon RandevuAl(TC_Numara):
+    Poliklinikleri göster ve seçim al
+    Seçilen poliklinik için doktor listesini göster ve seçim al
+    Uygun saatleri göster ve seçim al
+    Randevuyu onayla ve SMS gönderildi mesajı göster
+
+# Tahlil sonucu görüntüleme fonksiyonu
+Fonksiyon TahlilSonucuGor(TC_Numara):
+    Tahlilleri kontrol et
+    Eğer tahlil yoksa:
+        "Tahlil kaydı yok" mesajı göster
+    Değilse:
+        Tahlil listesini göster ve seçim al
+        Eğer sonuç hazırsa:
+            Sonucu göster
+            PDF indirme seçeneği sor
+        Değilse:
+            "Sonuç hazır değil" mesajı göster
+
+# Ana program döngüsü
+TC_Numara = HastaKimlikDogrulama()
+Eğer TC_Numara None ise:
+    Programı sonlandır
+
+Döngü başlat:
+    İşlem seçeneklerini göster: 1-Randevu Al, 2-Tahlil Gör
+    Kullanıcı seçim yapar
+    Eğer seçim 1 ise:
+        RandevuAl(TC_Numara)
+    Eğer seçim 2 ise:
+        TahlilSonucuGor(TC_Numara)
+    Başka işlem yapmak ister misiniz sor
+    Eğer cevap Hayır ise:
+        Döngüden çık ve programı sonlandır
+
+Bitir

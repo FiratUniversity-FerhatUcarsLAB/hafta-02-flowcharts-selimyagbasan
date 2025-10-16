@@ -1,0 +1,20 @@
+digraph HastaneSistemi {
+    rankdir=TB;
+    node [shape=box, style=rounded];
+
+    Basla [label="Başla"];
+
+    KimlikDogrulama [label="Hasta Kimlik Doğrulama"];
+    KimlikKontrol [shape=diamond, label="TC Numara var mı?"];
+    HastaBulunamadi [label="Hasta bulunamadı mesajı"];
+    AnaDongu [label="Ana Döngü Başlat"];
+
+    IslemSecim [label="İşlem Seçimi:\n1-Randevu Al\n2-Tahlil Sonucu Gör"];
+    RandevuAl [label="Randevu Al:\n- Poliklinik seç\n- Doktor seç\n- Saat seç\n- Randevu onay ve SMS"];
+    TahlilGor [label="Tahlil Sonucu Gör:\n- Tahlil var mı?\n- Sonuç hazır mı?\n- PDF indir opsiyonu"];
+
+    TahlilVarKontrol [shape=diamond, label="Tahlil var mı?"];
+    SonucHazirKontrol [shape=diamond, label="Sonuç hazır mı?"];
+    TahlilYok [label="Tahlil kaydı yok mesajı"];
+    SonucGor [label="Sonuç göster"];
+    Son

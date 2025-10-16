@@ -1,0 +1,61 @@
+digraph ATM {
+  rankdir=TB;
+  node [fontname="Helvetica"];
+
+  Start [label="Başla\n(Kart takılır)", shape=oval];
+
+  PIN_Input [label="PIN gir\n(input)", shape=box];
+  PIN_Check [label="PIN doğru?", shape=diamond];
+
+  HakKontrol [label="Kalan hak > 0 ?", shape=diamond];
+  BlockCard [label="Kart bloke\n(3 hatalı)\nİşlem sonu", shape=box];
+
+  ShowBalance [label="Bakiye göster", shape=box];
+  AmountInput [label="Çekilmek istenen tutarı gir", shape=box];
+
+  Mul20Check [label="Tutar 20'nin katı mı?", shape=diamond];
+  DailyLimitCheck [label="Günlük limit aşılır mı?", shape=diamond];
+  BalanceCheck [label="Yeterli bakiye var mı?", shape=diamond];
+
+  Dispense [label="Para ver\n(Bakiye güncelle)", shape=box];
+  Receipt [label="Fiş çıkar", shape=box];
+
+  MoreTxn [label="Başka işlem istiyor mu?", shape=diamond];
+  End [label="Kart iade\nİşlem sonu", shape=oval];
+
+  // Başlangıç
+  Start -> PIN_Input;
+
+  // PIN döngüsü
+  PIN_Input -> PIN_Check;
+  PIN_Check -> ShowBalance [label="EVET"];
+  PIN_Check -> HakKontrol [label="HAYIR"];
+
+  HakKontrol -> PIN_Input [label="EVET\n(kalan hak azalt)"];
+  HakKontrol -> BlockCard [label="HAYIR"];
+
+  // İşlem akışı
+  ShowBalance -> AmountInput;
+  AmountInput -> Mul20Check;
+
+  Mul20Check -> DailyLimitCheck [label="EVET"];
+  Mul20Check -> AmountInput [label="HAYIR\n(Tutar 20'nin katı değil)"];
+
+  DailyLimitCheck -> BalanceCheck [label="EVET"];
+  DailyLimitCheck -> AmountInput [label="HAYIR\n(Günlük limit aşılıyor)"];
+
+  BalanceCheck -> Dispense [label="EVET"];
+  BalanceCheck -> AmountInput [label="HAYIR\n(Yetersiz bakiye)"];
+
+  Dispense -> Receipt;
+  Receipt -> MoreTxn;
+
+  MoreTxn -> AmountInput [label="EVET"];
+  MoreTxn -> End [label="HAYIR"];
+
+  // Bloklanma sonrası son
+  BlockCard -> End;
+
+  // Görsel düzenleme ipuçları (opsiyonel)
+  { rank = same; Mul20Check; DailyLimitCheck; BalanceCheck; }
+}

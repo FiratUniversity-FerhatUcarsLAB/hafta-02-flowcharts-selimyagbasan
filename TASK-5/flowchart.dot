@@ -1,0 +1,44 @@
+digraph SmartHomeSecurity {
+    rankdir=TB;  // Yukarıdan aşağıya yön
+    node [shape=box, style=rounded, fontname="Arial"];
+
+    Start [label="Sistem Başlat"];
+    CheckActive [label="Sistem aktif mi?"];
+    WaitActive [label="Bekle ve tekrar kontrol et"];
+    ReadSensors [label="Sensörleri oku"];
+    MotionDetected [label="Hareket sensörü algıladı mı?"];
+    DoorWindowBreach [label="Kapı/Pencere ihlali var mı?"];
+    OwnerHome [label="Ev sahibi evde mi?"];
+    DetermineAlarm [label="Alarm seviyesi belirle"];
+    ActivateCamera [label="Kamerayı aktif et"];
+    SendNotification [label="Bildirim gönder (SMS/App/Email)"];
+    AlarmCleared [label="Ev sahibi alarmı sıfırladı mı?"];
+    ResetAlarm [label="Alarmı sıfırla"];
+    ContinueAlarm [label="Alarm devam etsin"];
+    WaitLoop [label="Bekle ve döngüye dön"];
+    
+    // Akış bağlantıları
+    Start -> CheckActive;
+    CheckActive -> ReadSensors [label="Evet"];
+    CheckActive -> WaitActive [label="Hayır"];
+    WaitActive -> CheckActive;
+
+    ReadSensors -> MotionDetected;
+    MotionDetected -> OwnerHome [label="Evet"];
+    MotionDetected -> DoorWindowBreach [label="Hayır"];
+
+    DoorWindowBreach -> OwnerHome [label="Evet"];
+    DoorWindowBreach -> DetermineAlarm [label="Hayır"];
+
+    OwnerHome -> WaitLoop [label="Evet (Yanlış alarm)"];
+    OwnerHome -> DetermineAlarm [label="Hayır"];
+
+    DetermineAlarm -> ActivateCamera;
+    ActivateCamera -> SendNotification;
+    SendNotification -> AlarmCleared;
+    AlarmCleared -> ResetAlarm [label="Evet"];
+    AlarmCleared -> ContinueAlarm [label="Hayır"];
+    ResetAlarm -> WaitLoop;
+    ContinueAlarm -> WaitLoop;
+    WaitLoop -> ReadSensors;
+}
